@@ -1,6 +1,22 @@
 {
   "models": [
     {
+      "slug": "traditional-turned",
+      "name": "Traditional Dining Chair, Turned Leg",
+      "file": "traditional-turned.glb",
+      "poster": "poster.webp",
+      "alt": "3D model of the Traditional dining chair with turned legs in walnut",
+      "note": "Walnut"
+    },
+    {
+      "slug": "traditional-straight",
+      "name": "Traditional Dining Chair, Straight Leg",
+      "file": "traditional-straight.glb",
+      "poster": "poster.webp",
+      "alt": "3D model of the Traditional dining chair with straight tapered legs in figured maple",
+      "note": "Figured maple"
+    },
+    {
       "slug": "windsor",
       "name": "Windsor Dining Chair",
       "file": "windsor.glb",

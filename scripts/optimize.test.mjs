@@ -183,6 +183,7 @@ test('the command writes a floored glb and a poster', async () => {
     assert.match(result.stdout, /102\.0 cm tall/);
     assert.match(result.stdout, /Draco/);
     const written = await readFile(output);
+    assert.equal(written.subarray(0, 4).toString('ascii'), 'glTF');
     assert.ok(written.includes('KHR_draco_mesh_compression'));
     const posterMeta = await sharp(path.join(directory, 'poster.webp')).metadata();
     assert.equal(posterMeta.format, 'webp');

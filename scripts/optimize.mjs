@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * Turn a Twinmotion / Unreal glTF export into a web GLB:
+ * Turn a Twinmotion / Unreal glTF, or a Fusion OBJ+MTL, into a web GLB:
  * meters, Y-up, centered, sitting on the floor, textures capped at 2048px,
  * color maps as WebP, data maps as lossless WebP, mesh compressed.
+ * A Fusion file with only a flat wood color gets a tileable semigloss grain.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -24,6 +25,8 @@ import {
 import draco3d from 'draco3dgltf';
 import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer';
 import sharp from 'sharp';
+
+import { loadFusionObj } from './fusion-obj.mjs';
 
 export const UNIT_IN_METERS = {
   m: 1,
@@ -289,6 +292,10 @@ async function writePoster(posterPath, outputGlb) {
 
 function printReport(input, output, inputBytes, outputBytes, report, poster) {
   console.log(`Read ${path.basename(input)} (${formatBytes(inputBytes)}).`);
+  for (const wood of report.woodSummary ?? []) {
+    const color = wood.flatColor ? 'flat MTL color' : 'MTL texture';
+    console.log(`Wood: ${wood.species} grain for "${wood.material}" (${color}, ${wood.triangles} triangles).`);
+  }
   if (report.requestedUnits === 'auto') {
     const rounded = Number(report.longest.toFixed(2));
     console.log(`Longest side is ${rounded} units. Treating that as ${UNIT_NAMES[report.units]} (×${report.scale}).`);
@@ -330,14 +337,19 @@ function printReport(input, output, inputBytes, outputBytes, report, poster) {
   }
 }
 
-const HELP = `Prepare a Twinmotion or Unreal furniture export for the Artesão website.
+const HELP = `Prepare a furniture export for the Artesão website.
 
 Usage:
-  node scripts/optimize.mjs <input.glb or .gltf> <output.glb> [options]
+  node scripts/optimize.mjs <input> <output.glb> [options]
+
+Input is a .glb, a .gltf, or a Fusion .obj (with its .mtl beside it).
 
 Options:
   --units auto|m|cm|mm|in|ft   How big one unit in the file is. Default: auto.
-  --up y|z                     Which axis is up in the file. Default: y.
+  --up y|z                     Which axis is up in the file.
+                               Default: z for .obj, y for .glb/.gltf.
+  --wood auto|walnut|maple     Grain used for a flat-color Fusion material.
+                               Default: auto, from the MTL name (Walnut, Maple).
   --compress draco|meshopt|none
                                Mesh compression. Default: draco.
   --max-texture <pixels>       Longest side of any texture. Default: 2048.
@@ -349,12 +361,17 @@ auto units, from the longest side of the file:
   up to 2000      centimeters
   over 2000       millimeters
 
+A Fusion OBJ is usually centimeters and Z-up, with only a flat wood color.
+The script stands it up, scales it to meters, sits it on the floor, and
+builds a tileable semigloss grain along each part (legs, rails, seat).
+
 The script prints the finished size in centimeters. A dining chair is about
 90–110 cm tall. If that number is wrong, run the command again with --units.
 If the piece is lying on its side, run it again with --up z.
 
-Example:
+Examples:
   node scripts/optimize.mjs ~/Downloads/Windsor.glb models/windsor/windsor.glb --poster ~/Downloads/windsor.png
+  node scripts/optimize.mjs "Traditional Turned Leg Chair.obj" models/traditional-turned/traditional-turned.glb
 `;
 
 async function main(argv) {
@@ -363,7 +380,8 @@ async function main(argv) {
     allowPositionals: true,
     options: {
       units: { type: 'string', default: 'auto' },
-      up: { type: 'string', default: 'y' },
+      up: { type: 'string' },
+      wood: { type: 'string', default: 'auto' },
       compress: { type: 'string', default: 'draco' },
       'max-texture': { type: 'string', default: '2048' },
       poster: { type: 'string' },
@@ -400,16 +418,31 @@ async function main(argv) {
 
   const inputStat = await fs.stat(input);
   const io = await createIO();
-  const document = await io.read(input);
+  const isObj = input.toLowerCase().endsWith('.obj');
+  let document;
+  let woodSummary = [];
+  if (isObj) {
+    const loaded = await loadFusionObj(input, { wood: values.wood });
+    document = loaded.document;
+    woodSummary = loaded.summaries;
+  } else {
+    if (values.wood !== 'auto') {
+      console.log('Ignoring --wood. It applies to a Fusion OBJ with a flat material color.');
+    }
+    document = await io.read(input);
+  }
   const report = await optimizeDocument(document, {
     units: values.units,
-    up: values.up,
+    up: values.up ?? (isObj ? 'z' : 'y'),
     compress: values.compress,
     maxTexture: values['max-texture'],
   });
+  report.woodSummary = woodSummary;
 
   await fs.mkdir(path.dirname(output), { recursive: true });
-  const partial = `${output}.partial`;
+  // The temporary name has to end in .glb. NodeIO packs a single binary only
+  // for that extension; anything else is written as JSON plus sidecar files.
+  const partial = output.replace(/\.glb$/i, '.partial.glb');
   try {
     await io.write(partial, document);
     await fs.rename(partial, output);

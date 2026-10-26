@@ -27,6 +27,8 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Collect the site
+        # source/ holds the original Fusion OBJ and MTL files. Leave it out
+        # so the published site is only the page, the snippet, and the models.
         run: |
           mkdir -p _site
           cp index.html .nojekyll _site/

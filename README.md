@@ -36,18 +36,43 @@ Until that release exists, `@main` serves whatever is on the main branch (jsDeli
 
 `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@main/models/windsor/windsor.glb`
 
-## Put Windsor on a Squarespace page
+## Traditional dining chairs
+
+Two versions of the Traditional chair, converted from the Fusion OBJ exports in `source/`. Finished height is about 95 cm.
+
+| | Turned leg | Straight leg |
+|---|---|---|
+| Real wood | Walnut | Figured maple |
+| Folder | `models/traditional-turned/` | `models/traditional-straight/` |
+| Finished size | 48.3 × 52.4 × 95.5 cm | 47.2 × 54.9 × 94.7 cm |
+| Squarespace block | [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html) | [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html) |
+
+**jsDelivr**, after the `v1` release
+
+- Turned model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-turned/traditional-turned.glb`
+- Turned poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-turned/poster.webp`
+- Straight model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-straight/traditional-straight.glb`
+- Straight poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-straight/poster.webp`
+
+**GitHub Pages**, after Pages is turned on
+
+- Turned model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-turned/traditional-turned.glb`
+- Straight model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-straight/traditional-straight.glb`
+
+Paste a snippet the same way as Windsor, below. Each file is already filled in. Two blocks on one page are fine.
+
+## Put a model on a Squarespace page
 
 Squarespace only runs JavaScript in Code Blocks on the Core, Plus, Advanced, Business, Commerce Basic, and Commerce Advanced plans. On a plan without it, the block saves and the viewer stays blank. See [Code blocks](https://support.squarespace.com/hc/en-us/articles/206543167-Code-blocks). The block itself must stay under Squarespace's 400 KB limit. This one is a few kilobytes. The model is loaded from the link, not pasted into the block.
 
-1. Open [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) and copy the whole file.
+1. Open the snippet for that chair and copy the whole file. Windsor is [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html). The Traditional chairs are [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html) and [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html).
 2. Edit the product page → **Add block** → **Code** → set the type to **HTML** → paste.
 3. On a store product, put the block in a section below the product details ([adding information to a product](https://support.squarespace.com/hc/en-us/articles/206541037-Add-additional-information-to-store-page-products)).
 4. Save, then look at the page logged out or in a private window. Squarespace sometimes hides Code Block output while you are logged in. The help article above calls the workaround "Preview in Safe Mode".
 
-The snippet already points at the Windsor jsDelivr addresses, with camera controls, auto-rotate, a ground shadow, a poster, a responsive frame, and AR (`webxr`, Scene Viewer, and Quick Look). "View in your room" uses the model's real size, so the file has to be in meters. The optimizer below does that.
+Each snippet already points at that chair's jsDelivr addresses, with camera controls, auto-rotate, a ground shadow, a poster, a responsive frame, and AR (`webxr`, Scene Viewer, and Quick Look). "View in your room" uses the model's real size, so the file has to be in meters. The optimizer below does that.
 
-For the next product, duplicate the snippet and change the two addresses and the alt text. Two snippets on one page are fine.
+For the next product, duplicate a snippet and change the two addresses and the alt text. Two snippets on one page are fine.
 
 ## Add another product
 
@@ -69,6 +94,22 @@ A `.gltf` with its textures sitting in the same folder is fine too. The script p
 
 Menu names match Twinmotion and Unreal Engine as of 2025. If a label has moved, you want a Datasmith export from Twinmotion and a glTF `.glb` export from Unreal.
 
+### Or export an OBJ from Fusion
+
+Autodesk Fusion can save the piece as OBJ. That is the path used for the Traditional chairs.
+
+1. Export one chair, not the whole design. Keep the `.obj` and the `.mtl` in the same folder. Fusion's MTL is usually only a flat color (a walnut or maple semigloss) and has no wood photograph. That is expected.
+2. Put both files in `source/<product>/`. Those originals stay in the repository and are not copied to GitHub Pages.
+3. Run the optimizer on the `.obj`. It reads the `.mtl` beside it. Fusion files are centimeters and Z-up. The script treats a `.obj` that way unless you pass `--units` or `--up`.
+4. The flat color becomes a tileable semigloss wood: color, a normal map, and a roughness map, with the grain running along each leg, rail, and the seat. `--wood auto` (the default) reads the material name. A name containing "Walnut" or "Maple" selects that grain. Pass `--wood walnut` or `--wood maple` when the name does not say which.
+
+```bash
+node scripts/optimize.mjs "source/traditional-turned/Traditional Turned Leg Chair.obj" models/traditional-turned/traditional-turned.glb
+node scripts/optimize.mjs "source/traditional-straight/Simple Dining Chair.obj" models/traditional-straight/traditional-straight.glb
+```
+
+The turned-leg file is walnut. The straight tapered-leg file (`Simple Dining Chair`) is figured maple. Check the printed line `Wood: walnut grain` or `Wood: maple grain` before you commit.
+
 ### 2. Run the optimizer
 
 In a terminal, from this repository:
@@ -76,6 +117,12 @@ In a terminal, from this repository:
 ```bash
 npm install
 node scripts/optimize.mjs "/path/to/Windsor.glb" models/windsor/windsor.glb --poster "/path/to/poster.png"
+```
+
+A Fusion OBJ uses the same command. The `.mtl` has to sit next to the `.obj`:
+
+```bash
+node scripts/optimize.mjs ~/Downloads/Chair.obj models/chair/chair.glb --wood maple
 ```
 
 Use a new folder name for a new piece, in lowercase, with hyphens if you need them:
@@ -86,7 +133,8 @@ node scripts/optimize.mjs ~/Downloads/Sideboard.glb models/sideboard/sideboard.g
 
 The script:
 
-- Converts the file to **meters** and **Y-up** (the web standard). Twinmotion and Unreal are Z-up and centimeter-based internally. Unreal's exporter usually converts this already. The script still checks, and fixes a file that was exported in centimeters or left Z-up.
+- Accepts a `.glb`, a `.gltf` (with its textures in the same folder), or a Fusion `.obj` plus `.mtl`.
+- Converts the file to **meters** and **Y-up** (the web standard). Twinmotion, Unreal, and Fusion are Z-up and centimeter-based internally. Unreal's exporter usually converts this already. The script still checks, and fixes a file that was exported in centimeters or left Z-up. A `.obj` is assumed Z-up until you pass `--up y`.
 - Centers the piece and sits it on the floor, which is what "View in your room" uses.
 - Shrinks textures so the long side is at most **2048** pixels. Photographs (color, glow) become WebP. Normal maps and the other data textures become **lossless** WebP, so shading does not pick up compression blotches. A texture that is one flat color is stored as a material color instead.
 - Compresses the mesh with **Draco**. `--compress meshopt` is the other option. `--compress none` leaves the mesh uncompressed.
@@ -98,7 +146,8 @@ It prints the finished size, for example `58.0 cm wide × 65.0 cm deep × 102.0 
 | If the result looks… | Run the command again with |
 |---|---|
 | Huge or tiny | `--units cm`, `--units m`, `--units mm`, `--units in`, or `--units ft` |
-| Lying on its side | `--up z` |
+| Lying on its side | `--up z` (or `--up y` if a `.obj` was already upright) |
+| The wrong wood | `--wood walnut` or `--wood maple` |
 | Larger than 20 MB | `--max-texture 1024` |
 
 `auto` (the default) reads the longest side of the file: up to 20 is treated as meters, up to 2000 as centimeters, and anything longer as millimeters. `--units` overrides that.
@@ -136,7 +185,7 @@ When you replace a model, publish a new tag and update the snippet. Pushing to `
 
 ## Turn on GitHub Pages
 
-The workflow in `.github/workflows/pages.yml` publishes `index.html`, `embed/`, and `models/` from `main`. Do this once, after this setup is merged:
+The workflow in `.github/workflows/pages.yml` publishes `index.html`, `embed/`, and `models/` from `main`. It does not publish `source/`. Do this once, after this setup is merged:
 
 1. Open **Settings → Pages** for [this repository](https://github.com/ArtesaoFineFurniture/artesao-3d-models/settings/pages).
 2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
@@ -152,9 +201,12 @@ You can re-run it any time from **Actions → Publish GitHub Pages → Run workf
 |---|---|
 | `models/<product>/` | One folder per piece: the `.glb` and a poster |
 | `models/catalog.json` | The list the demo page reads |
-| `embed/model-viewer-snippet.html` | The Squarespace Code Block |
+| `source/<product>/` | Original Fusion `.obj` and `.mtl`. Not published to GitHub Pages |
+| `embed/model-viewer-snippet.html` | Squarespace Code Block for the Windsor chair |
+| `embed/traditional-turned-snippet.html` | Code Block for the turned-leg Traditional chair |
+| `embed/traditional-straight-snippet.html` | Code Block for the straight-leg Traditional chair |
 | `index.html` | The demo page GitHub Pages serves |
-| `scripts/optimize.mjs` | The Node prep script (`@gltf-transform`, Sharp, Draco, Meshopt) |
+| `scripts/optimize.mjs` | The Node prep script (`@gltf-transform`, Sharp, Draco, Meshopt). Reads GLB, glTF, and Fusion OBJ+MTL |
 | `.github/workflows/pages.yml` | Publishes the site from `main` |
 
 Check the script with `npm test` after `npm install`. Node.js 20 or newer.
