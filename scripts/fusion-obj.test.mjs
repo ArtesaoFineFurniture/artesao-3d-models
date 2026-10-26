@@ -7,13 +7,20 @@ import { test } from 'node:test';
 import { getBounds } from '@gltf-transform/core';
 import sharp from 'sharp';
 
-import { loadFusionObj, partFrame, uvsForTriangle, woodSpeciesFromName } from './fusion-obj.mjs';
+import { loadFusionObj, materialFinish, partFrame, uvsForTriangle, woodSpeciesFromName } from './fusion-obj.mjs';
 import { optimizeDocument } from './optimize.mjs';
 
 test('material names pick walnut or maple', () => {
   assert.equal(woodSpeciesFromName('3D_Walnut_-_Semigloss'), 'walnut');
   assert.equal(woodSpeciesFromName('3D_Maple_-_Semigloss'), 'maple');
   assert.equal(woodSpeciesFromName('Steel'), null);
+});
+
+test('leather names and flat gray or black become matte leather', () => {
+  assert.equal(materialFinish('Leather_-_Matte_(Black)', [0, 0, 0]), 'leather');
+  assert.equal(materialFinish('Opaque(63,63,63)', [0.25098, 0.25098, 0.25098]), 'leather');
+  assert.equal(materialFinish('Opaque(86,58,26)', [0.337255, 0.227451, 0.101961]), 'walnut');
+  assert.equal(materialFinish('3D_Walnut_-_Semigloss', [0.337255, 0.227451, 0.101961]), 'walnut');
 });
 
 test('turned legs are lathed and the seat is a box', () => {
@@ -71,4 +78,37 @@ test('a Fusion OBJ in centimeters and Z-up becomes a meter-tall Y-up chair', asy
   assert.ok(color);
   const meta = await sharp(Buffer.from(color.getImage())).metadata();
   assert.equal(meta.format, 'webp');
+});
+
+test('a gray Fusion material stays leather when wood is forced to walnut', async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), 'fusion-leather-'));
+  const obj = path.join(directory, 'Seat.obj');
+  await writeFile(path.join(directory, 'Seat.mtl'), [
+    'newmtl Opaque(86,58,26)',
+    'Kd 0.337255 0.227451 0.101961',
+    'newmtl Opaque(63,63,63)',
+    'Kd 0.250980 0.250980 0.250980',
+    '',
+  ].join('\n'));
+  await writeFile(obj, [
+    'mtllib Seat.mtl',
+    'g Frame',
+    'v 0 0 0',
+    'v 10 0 0',
+    'v 0 10 40',
+    'usemtl Opaque(86,58,26)',
+    'f 1 2 3',
+    'g Seat',
+    'v 0 0 42',
+    'v 20 0 42',
+    'v 0 20 48',
+    'usemtl Opaque(63,63,63)',
+    'f 4 5 6',
+    '',
+  ].join('\n'));
+  const loaded = await loadFusionObj(obj, { wood: 'walnut', textureSize: 16 });
+  const byName = Object.fromEntries(loaded.summaries.map((item) => [item.material, item.species]));
+  assert.equal(byName['Opaque(86,58,26)'], 'walnut');
+  assert.equal(byName['Opaque(63,63,63)'], 'leather');
+  assert.ok(loaded.document.getRoot().listTextures().some((texture) => texture.getName() === 'leather-color'));
 });

@@ -39,6 +39,19 @@ export function speciesFromKd(kd) {
   return luma > 0.45 ? 'maple' : 'walnut';
 }
 
+/** Leather when the MTL says so, or when the flat color is a neutral gray or black. */
+export function materialFinish(name, kd) {
+  const text = String(name || '').toLowerCase();
+  if (/leather|ultraleather|upholster|vinyl/.test(text)) return 'leather';
+  const named = woodSpeciesFromName(name);
+  if (named) return named;
+  if (kd && kd.every((channel) => Number.isFinite(channel))) {
+    const chroma = Math.max(...kd) - Math.min(...kd);
+    if (chroma < 0.06) return 'leather';
+  }
+  return speciesFromKd(kd);
+}
+
 function resolveSpecies(requested, materialName, kd) {
   if (requested && requested !== 'auto') {
     if (!SPECIES[requested]) {
@@ -143,14 +156,30 @@ function sampleWood(species, u, v) {
   return { rgb, height, roughness };
 }
 
-export async function generateWoodMaps({ species, size = 1024 }) {
+function sampleLeather(u, v) {
+  const macro = fbm(u, v, 3);
+  const pebble = valueNoise(u, v, 46, 46, 9);
+  const fine = valueNoise(u, v, 92, 92, 4);
+  const grain = smoothstep(0.42, 0.82, pebble);
+  const deep = [14, 12, 11];
+  const hide = [32, 27, 24];
+  const nap = [52, 44, 39];
+  let rgb = mix3(deep, hide, 0.28 + macro * 0.55);
+  rgb = mix3(rgb, nap, grain * 0.18);
+  rgb = mix3(rgb, deep, (1 - fine) * 0.12);
+  const height = (pebble - 0.5) * 0.28 + (fine - 0.5) * 0.1;
+  const roughness = mix(198, 236, 0.65 + (1 - grain) * 0.35);
+  return { rgb, height, roughness };
+}
+
+async function mapsFromSamples(sampleAt, size, strength) {
   const color = Buffer.alloc(size * size * 3);
   const rough = Buffer.alloc(size * size * 3);
   const height = new Float32Array(size * size);
   for (let y = 0; y < size; y += 1) {
     const v = y / size;
     for (let x = 0; x < size; x += 1) {
-      const sample = sampleWood(species, x / size, v);
+      const sample = sampleAt(x / size, v);
       const index = y * size + x;
       height[index] = sample.height;
       const offset = index * 3;
@@ -162,7 +191,6 @@ export async function generateWoodMaps({ species, size = 1024 }) {
   }
 
   const normal = Buffer.alloc(size * size * 3);
-  const strength = species === 'maple' ? 1.6 : 2.4;
   for (let y = 0; y < size; y += 1) {
     for (let x = 0; x < size; x += 1) {
       const xm = (x - 1 + size) % size;
@@ -194,6 +222,15 @@ export async function generateWoodMaps({ species, size = 1024 }) {
     sharp(rough, { raw }).png().toBuffer(),
   ]);
   return { colorPng, normalPng, roughPng, size };
+}
+
+export async function generateWoodMaps({ species, size = 1024 }) {
+  const strength = species === 'maple' ? 1.6 : 2.4;
+  return mapsFromSamples((u, v) => sampleWood(species, u, v), size, strength);
+}
+
+export async function generateLeatherMaps({ size = 1024 } = {}) {
+  return mapsFromSamples(sampleLeather, size, 1.05);
 }
 
 function parseObj(text) {
@@ -429,11 +466,12 @@ function attachTexture(document, material, slot, name, png, kind) {
 }
 
 async function addWoodMaterial(document, materialName, species, maps) {
+  const normalScale = species === 'leather' ? 0.4 : species === 'maple' ? 0.55 : 0.7;
   const material = document.createMaterial(materialName || species)
     .setMetallicFactor(0)
     .setRoughnessFactor(1)
     .setBaseColorFactor([1, 1, 1, 1])
-    .setNormalScale(species === 'maple' ? 0.55 : 0.7);
+    .setNormalScale(normalScale);
   attachTexture(document, material, 'baseColor', `${species}-color`, maps.colorPng);
   attachTexture(document, material, 'normal', `${species}-normal`, maps.normalPng);
   attachTexture(document, material, 'roughness', `${species}-roughness`, maps.roughPng);
@@ -469,8 +507,12 @@ export async function loadFusionObj(objPath, options = {}) {
   const summaries = [];
   for (const [materialName, faces] of byMaterial) {
     const mtl = library.get(materialName);
-    const species = resolveSpecies(options.wood ?? 'auto', materialName, mtl?.kd);
-    const maps = await generateWoodMaps({ species, size: options.textureSize ?? 1024 });
+    let species = materialFinish(materialName, mtl?.kd);
+    if (species !== 'leather') species = resolveSpecies(options.wood ?? 'auto', materialName, mtl?.kd);
+    const size = options.textureSize ?? 1024;
+    const maps = species === 'leather'
+      ? await generateLeatherMaps({ size })
+      : await generateWoodMaps({ species, size });
     const material = await addWoodMaterial(document, materialName, species, maps);
     if (mtl?.mapKd && mtlPath) {
       const imagePath = path.resolve(path.dirname(mtlPath), mtl.mapKd);

@@ -20,9 +20,17 @@
       "slug": "windsor",
       "name": "Windsor Dining Chair",
       "file": "windsor.glb",
-      "poster": "poster.png",
-      "alt": "3D model of the Windsor Dining Chair in walnut with black leather upholstery",
-      "note": "Demo model"
+      "poster": "poster.webp",
+      "alt": "3D model of the Windsor dining chair in walnut with black leather upholstery",
+      "note": "Walnut, black leather"
+    },
+    {
+      "slug": "windsor-arm",
+      "name": "Windsor Armchair",
+      "file": "windsor-arm.glb",
+      "poster": "poster.webp",
+      "alt": "3D model of the Windsor armchair in walnut with black leather upholstery",
+      "note": "Walnut, black leather"
     }
   ]
 }

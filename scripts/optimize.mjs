@@ -294,7 +294,11 @@ function printReport(input, output, inputBytes, outputBytes, report, poster) {
   console.log(`Read ${path.basename(input)} (${formatBytes(inputBytes)}).`);
   for (const wood of report.woodSummary ?? []) {
     const color = wood.flatColor ? 'flat MTL color' : 'MTL texture';
-    console.log(`Wood: ${wood.species} grain for "${wood.material}" (${color}, ${wood.triangles} triangles).`);
+    if (wood.species === 'leather') {
+      console.log(`Leather: soft matte for "${wood.material}" (${color}, ${wood.triangles} triangles).`);
+    } else {
+      console.log(`Wood: ${wood.species} grain for "${wood.material}" (${color}, ${wood.triangles} triangles).`);
+    }
   }
   if (report.requestedUnits === 'auto') {
     const rounded = Number(report.longest.toFixed(2));
@@ -361,9 +365,10 @@ auto units, from the longest side of the file:
   up to 2000      centimeters
   over 2000       millimeters
 
-A Fusion OBJ is usually centimeters and Z-up, with only a flat wood color.
+A Fusion OBJ is usually centimeters and Z-up, with only a flat color.
 The script stands it up, scales it to meters, sits it on the floor, and
-builds a tileable semigloss grain along each part (legs, rails, seat).
+builds a tileable semigloss grain along each wood part. A material named
+leather, or a flat gray or black, becomes a soft matte dark leather.
 
 The script prints the finished size in centimeters. A dining chair is about
 90–110 cm tall. If that number is wrong, run the command again with --units.

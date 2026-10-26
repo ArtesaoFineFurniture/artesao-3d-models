@@ -13,24 +13,27 @@ jsDelivr is the address to paste into the website. A tag such as `v1` stays put 
 
 Commit the `.glb` and poster as normal Git files. Do not turn on Git LFS. LFS stores a small pointer text file instead of the model, and both GitHub Pages and jsDelivr would serve that pointer, so the viewer would fail. Keep each file under **20 MB** (jsDelivr's limit for a GitHub file). GitHub itself accepts files up to 100 MB.
 
-## Windsor Dining Chair
+## Windsor dining chairs
 
-Demo model, already compressed. Folder: `models/windsor/`.
+Side chair and armchair, converted from the Fusion OBJ exports in `source/`. The frame is walnut. The seat and back are a soft matte black leather. Finished height is 96.8 cm.
 
-| File | What it is |
-|---|---|
-| `windsor.glb` | The model (from the Draco-compressed `chair-v2.glb` prototype) |
-| `poster.png` | The still image shown while the model loads |
-
-**GitHub Pages**
-
-- Model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor/windsor.glb`
-- Poster: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor/poster.png`
+| | Side chair | Armchair |
+|---|---|---|
+| Folder | `models/windsor/` | `models/windsor-arm/` |
+| Finished size | 53.7 × 51.3 × 96.8 cm | 56.1 × 52.9 × 96.8 cm |
+| Squarespace block | [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) | [`embed/windsor-arm-snippet.html`](embed/windsor-arm-snippet.html) |
 
 **jsDelivr**, after you publish the `v1` release described below
 
-- Model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor/windsor.glb`
-- Poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor/poster.png`
+- Side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor/windsor.glb`
+- Side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor/poster.webp`
+- Arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor-arm/windsor-arm.glb`
+- Arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor-arm/poster.webp`
+
+**GitHub Pages**, after Pages is turned on
+
+- Side model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor/windsor.glb`
+- Arm model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-arm/windsor-arm.glb`
 
 Until that release exists, `@main` serves whatever is on the main branch (jsDelivr may cache it for a while, so use it only to test):
 
@@ -65,7 +68,7 @@ Paste a snippet the same way as Windsor, below. Each file is already filled in. 
 
 Squarespace only runs JavaScript in Code Blocks on the Core, Plus, Advanced, Business, Commerce Basic, and Commerce Advanced plans. On a plan without it, the block saves and the viewer stays blank. See [Code blocks](https://support.squarespace.com/hc/en-us/articles/206543167-Code-blocks). The block itself must stay under Squarespace's 400 KB limit. This one is a few kilobytes. The model is loaded from the link, not pasted into the block.
 
-1. Open the snippet for that chair and copy the whole file. Windsor is [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html). The Traditional chairs are [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html) and [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html).
+1. Open the snippet for that chair and copy the whole file. Windsor is [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) and the armchair is [`embed/windsor-arm-snippet.html`](embed/windsor-arm-snippet.html). The Traditional chairs are [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html) and [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html).
 2. Edit the product page → **Add block** → **Code** → set the type to **HTML** → paste.
 3. On a store product, put the block in a section below the product details ([adding information to a product](https://support.squarespace.com/hc/en-us/articles/206541037-Add-additional-information-to-store-page-products)).
 4. Save, then look at the page logged out or in a private window. Squarespace sometimes hides Code Block output while you are logged in. The help article above calls the workaround "Preview in Safe Mode".
@@ -101,7 +104,7 @@ Autodesk Fusion can save the piece as OBJ. That is the path used for the Traditi
 1. Export one chair, not the whole design. Keep the `.obj` and the `.mtl` in the same folder. Fusion's MTL is usually only a flat color (a walnut or maple semigloss) and has no wood photograph. That is expected.
 2. Put both files in `source/<product>/`. Those originals stay in the repository and are not copied to GitHub Pages.
 3. Run the optimizer on the `.obj`. It reads the `.mtl` beside it. Fusion files are centimeters and Z-up. The script treats a `.obj` that way unless you pass `--units` or `--up`.
-4. The flat color becomes a tileable semigloss wood: color, a normal map, and a roughness map, with the grain running along each leg, rail, and the seat. `--wood auto` (the default) reads the material name. A name containing "Walnut" or "Maple" selects that grain. Pass `--wood walnut` or `--wood maple` when the name does not say which.
+4. A flat wood color becomes a tileable semigloss grain: color, a normal map, and a roughness map, with the grain running along each leg, rail, and the seat. `--wood auto` (the default) reads the material name. A name containing "Walnut" or "Maple" selects that grain. Pass `--wood walnut` or `--wood maple` when the name does not say which. A material named leather, or a flat gray or black with no texture, becomes a soft matte dark leather and is left alone by `--wood`.
 
 ```bash
 node scripts/optimize.mjs "source/traditional-turned/Traditional Turned Leg Chair.obj" models/traditional-turned/traditional-turned.glb
@@ -152,7 +155,7 @@ It prints the finished size, for example `58.0 cm wide × 65.0 cm deep × 102.0 
 
 `auto` (the default) reads the longest side of the file: up to 20 is treated as meters, up to 2000 as centimeters, and anything longer as millimeters. `--units` overrides that.
 
-A poster is the picture shoppers see while the model downloads. A straight-on or three-quarter screenshot is enough. `--poster` makes `poster.webp`. You can also drop in your own `poster.png` and name it in `models/catalog.json`. Windsor uses `poster.png`.
+A poster is the picture shoppers see while the model downloads. A straight-on or three-quarter screenshot is enough. `--poster` makes `poster.webp`. You can also drop in your own `poster.png` and name it in `models/catalog.json`.
 
 ### 3. List it, then commit
 
@@ -202,7 +205,8 @@ You can re-run it any time from **Actions → Publish GitHub Pages → Run workf
 | `models/<product>/` | One folder per piece: the `.glb` and a poster |
 | `models/catalog.json` | The list the demo page reads |
 | `source/<product>/` | Original Fusion `.obj` and `.mtl`. Not published to GitHub Pages |
-| `embed/model-viewer-snippet.html` | Squarespace Code Block for the Windsor chair |
+| `embed/model-viewer-snippet.html` | Squarespace Code Block for the Windsor side chair |
+| `embed/windsor-arm-snippet.html` | Code Block for the Windsor armchair |
 | `embed/traditional-turned-snippet.html` | Code Block for the turned-leg Traditional chair |
 | `embed/traditional-straight-snippet.html` | Code Block for the straight-leg Traditional chair |
 | `index.html` | The demo page GitHub Pages serves |
