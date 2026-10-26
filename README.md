@@ -15,7 +15,7 @@ Commit the `.glb` and poster as normal Git files. Do not turn on Git LFS. LFS st
 
 ## Windsor dining chairs
 
-Side chair and armchair, converted from the Fusion OBJ exports in `source/`. The frame is walnut. The seat and back are a soft matte black leather. Finished height is 96.8 cm.
+Side chair and armchair, converted from the Fusion OBJ exports in `source/`. The frame is a grey-brown walnut with a photographic grain. The seat and back are a soft matte light warm-grey leather. Finished height is 96.8 cm. Each model is about 324 KB.
 
 | | Side chair | Armchair |
 |---|---|---|
@@ -104,7 +104,7 @@ Autodesk Fusion can save the piece as OBJ. That is the path used for the Traditi
 1. Export one chair, not the whole design. Keep the `.obj` and the `.mtl` in the same folder. Fusion's MTL is usually only a flat color (a walnut or maple semigloss) and has no wood photograph. That is expected.
 2. Put both files in `source/<product>/`. Those originals stay in the repository and are not copied to GitHub Pages.
 3. Run the optimizer on the `.obj`. It reads the `.mtl` beside it. Fusion files are centimeters and Z-up. The script treats a `.obj` that way unless you pass `--units` or `--up`.
-4. A flat wood color becomes a tileable semigloss grain: color, a normal map, and a roughness map, with the grain running along each leg, rail, and the seat. `--wood auto` (the default) reads the material name. A name containing "Walnut" or "Maple" selects that grain. Pass `--wood walnut` or `--wood maple` when the name does not say which. A material named leather, or a flat gray or black with no texture, becomes a soft matte dark leather and is left alone by `--wood`.
+4. A flat wood color becomes a tileable semigloss grain, with the grain running along each leg, rail, and the seat. Walnut uses the photographic plank in `scripts/textures/` (colour and a pore normal). `--stain warm` is a brown walnut. `--stain grey` is the grey-brown used on the Windsor chairs. `--wood auto` reads the material name. A name containing "Walnut" or "Maple" selects that grain. Pass `--wood walnut` or `--wood maple` when the name does not say which. A material named leather, or a flat gray or black with no texture, becomes a soft matte leather and is left alone by `--wood`.
 
 ```bash
 node scripts/optimize.mjs "source/traditional-turned/Traditional Turned Leg Chair.obj" models/traditional-turned/traditional-turned.glb
@@ -211,6 +211,7 @@ You can re-run it any time from **Actions → Publish GitHub Pages → Run workf
 | `embed/traditional-straight-snippet.html` | Code Block for the straight-leg Traditional chair |
 | `index.html` | The demo page GitHub Pages serves |
 | `scripts/optimize.mjs` | The Node prep script (`@gltf-transform`, Sharp, Draco, Meshopt). Reads GLB, glTF, and Fusion OBJ+MTL |
+| `scripts/textures/` | Photographic walnut grain used for walnut parts |
 | `.github/workflows/pages.yml` | Publishes the site from `main` |
 
 Check the script with `npm test` after `npm install`. Node.js 20 or newer.

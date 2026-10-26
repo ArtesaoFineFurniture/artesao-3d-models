@@ -297,7 +297,8 @@ function printReport(input, output, inputBytes, outputBytes, report, poster) {
     if (wood.species === 'leather') {
       console.log(`Leather: soft matte for "${wood.material}" (${color}, ${wood.triangles} triangles).`);
     } else {
-      console.log(`Wood: ${wood.species} grain for "${wood.material}" (${color}, ${wood.triangles} triangles).`);
+      const stain = wood.stain ? `, ${wood.stain} stain` : '';
+      console.log(`Wood: ${wood.species} grain for "${wood.material}" (${color}${stain}, ${wood.triangles} triangles).`);
     }
   }
   if (report.requestedUnits === 'auto') {
@@ -354,6 +355,8 @@ Options:
                                Default: z for .obj, y for .glb/.gltf.
   --wood auto|walnut|maple     Grain used for a flat-color Fusion material.
                                Default: auto, from the MTL name (Walnut, Maple).
+  --stain warm|grey            Walnut stain. warm is a brown walnut.
+                               grey is the grey-brown Windsor stain. Default: warm.
   --compress draco|meshopt|none
                                Mesh compression. Default: draco.
   --max-texture <pixels>       Longest side of any texture. Default: 2048.
@@ -367,8 +370,11 @@ auto units, from the longest side of the file:
 
 A Fusion OBJ is usually centimeters and Z-up, with only a flat color.
 The script stands it up, scales it to meters, sits it on the floor, and
-builds a tileable semigloss grain along each wood part. A material named
-leather, or a flat gray or black, becomes a soft matte dark leather.
+builds a tileable semigloss grain along each wood part. Walnut uses a
+photographic grain (colour, normal, roughness) with the grain running
+along each leg, post, and rail. --stain grey shifts that walnut to the
+grey-brown of the Windsor chairs. A material named leather, or a flat
+gray or black, becomes a soft matte leather.
 
 The script prints the finished size in centimeters. A dining chair is about
 90–110 cm tall. If that number is wrong, run the command again with --units.
@@ -387,6 +393,7 @@ async function main(argv) {
       units: { type: 'string', default: 'auto' },
       up: { type: 'string' },
       wood: { type: 'string', default: 'auto' },
+      stain: { type: 'string', default: 'warm' },
       compress: { type: 'string', default: 'draco' },
       'max-texture': { type: 'string', default: '2048' },
       poster: { type: 'string' },
@@ -427,12 +434,12 @@ async function main(argv) {
   let document;
   let woodSummary = [];
   if (isObj) {
-    const loaded = await loadFusionObj(input, { wood: values.wood });
+    const loaded = await loadFusionObj(input, { wood: values.wood, stain: values.stain });
     document = loaded.document;
     woodSummary = loaded.summaries;
   } else {
-    if (values.wood !== 'auto') {
-      console.log('Ignoring --wood. It applies to a Fusion OBJ with a flat material color.');
+    if (values.wood !== 'auto' || values.stain !== 'warm') {
+      console.log('Ignoring --wood and --stain. They apply to a Fusion OBJ with a flat material color.');
     }
     document = await io.read(input);
   }

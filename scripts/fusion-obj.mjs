@@ -5,11 +5,22 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { Document, TextureInfo } from '@gltf-transform/core';
 import sharp from 'sharp';
 
 const TILE_CM = 14;
+/** One repeat of the photographic walnut plank, in centimeters. */
+const WOOD_TILE_CM = 42;
+const LEATHER_TILE_CM = 18;
+
+const TEXTURE_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'textures');
+
+const WALNUT_STAINS = {
+  warm: { dark: [54, 32, 16], light: [150, 104, 58] },
+  grey: { dark: [46, 40, 34], light: [132, 118, 102] },
+};
 
 const SPECIES = {
   walnut: {
@@ -161,14 +172,14 @@ function sampleLeather(u, v) {
   const pebble = valueNoise(u, v, 46, 46, 9);
   const fine = valueNoise(u, v, 92, 92, 4);
   const grain = smoothstep(0.42, 0.82, pebble);
-  const deep = [14, 12, 11];
-  const hide = [32, 27, 24];
-  const nap = [52, 44, 39];
-  let rgb = mix3(deep, hide, 0.28 + macro * 0.55);
-  rgb = mix3(rgb, nap, grain * 0.18);
-  rgb = mix3(rgb, deep, (1 - fine) * 0.12);
-  const height = (pebble - 0.5) * 0.28 + (fine - 0.5) * 0.1;
-  const roughness = mix(198, 236, 0.65 + (1 - grain) * 0.35);
+  const deep = [158, 160, 146];
+  const hide = [196, 198, 184];
+  const napColor = [214, 214, 200];
+  let rgb = mix3(deep, hide, 0.42 + macro * 0.46);
+  rgb = mix3(rgb, napColor, grain * 0.35);
+  rgb = mix3(rgb, deep, (1 - fine) * 0.08);
+  const height = (pebble - 0.5) * 0.12 + (fine - 0.5) * 0.04;
+  const roughness = mix(214, 240, 0.75 + (1 - grain) * 0.25);
   return { rgb, height, roughness };
 }
 
@@ -230,7 +241,54 @@ export async function generateWoodMaps({ species, size = 1024 }) {
 }
 
 export async function generateLeatherMaps({ size = 1024 } = {}) {
-  return mapsFromSamples(sampleLeather, size, 1.05);
+  return mapsFromSamples(sampleLeather, size, 0.55);
+}
+
+const walnutCache = new Map();
+
+/**
+ * Photographic walnut plank from the v2 viewer, recoloured to a stain.
+ * Grain runs vertically in the image, which is the V axis of the part UVs.
+ */
+export async function walnutMapsForStain(stain = 'warm') {
+  const key = WALNUT_STAINS[stain] ? stain : 'warm';
+  if (walnutCache.has(key)) return walnutCache.get(key);
+  const palette = WALNUT_STAINS[key];
+  const { data, info } = await sharp(path.join(TEXTURE_DIR, 'walnut-basecolor.jpg'))
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  let lumaMin = Infinity;
+  let lumaMax = -Infinity;
+  const luma = new Float32Array(info.width * info.height);
+  for (let i = 0, p = 0; i < data.length; i += 3, p += 1) {
+    const value = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+    luma[p] = value;
+    lumaMin = Math.min(lumaMin, value);
+    lumaMax = Math.max(lumaMax, value);
+  }
+  const span = lumaMax - lumaMin || 1;
+  const graded = Buffer.alloc(data.length);
+  for (let i = 0, p = 0; i < data.length; i += 3, p += 1) {
+    const t = (luma[p] - lumaMin) / span;
+    const rgb = mix3(palette.dark, palette.light, t);
+    graded[i] = clampByte(rgb[0]);
+    graded[i + 1] = clampByte(rgb[1]);
+    graded[i + 2] = clampByte(rgb[2]);
+  }
+  const [colorPng, normalPng] = await Promise.all([
+    sharp(graded, { raw: { width: info.width, height: info.height, channels: 3 } }).png().toBuffer(),
+    sharp(path.join(TEXTURE_DIR, 'walnut-normal.jpg')).png().toBuffer(),
+  ]);
+  const maps = {
+    colorPng,
+    normalPng,
+    roughPng: null,
+    roughnessFactor: key === 'grey' ? 0.5 : 0.42,
+    size: info.width,
+  };
+  walnutCache.set(key, maps);
+  return maps;
 }
 
 function parseObj(text) {
@@ -348,8 +406,7 @@ function dominantAxis(normal) {
   return 2;
 }
 
-export function uvsForTriangle(points, normal, frame) {
-  const tile = TILE_CM;
+export function uvsForTriangle(points, normal, frame, tile = TILE_CM) {
   const grain = frame.grain;
   const others = [0, 1, 2].filter((axis) => axis !== grain);
   const endGrain = Math.abs(normal[grain]) > 0.65;
@@ -400,7 +457,7 @@ function groupFrames(parsed) {
   return frames;
 }
 
-function buildPrimitive(document, buffer, parsed, faces, material, frames) {
+function buildPrimitive(document, buffer, parsed, faces, material, frames, tile) {
   const positions = [];
   const normals = [];
   const uvs = [];
@@ -431,7 +488,7 @@ function buildPrimitive(document, buffer, parsed, faces, material, frames) {
       return stored ?? geometric;
     });
     const frame = frames.get(face.group);
-    const faceUvs = uvsForTriangle(points, geometric, frame);
+    const faceUvs = uvsForTriangle(points, geometric, frame, tile);
     for (let corner = 0; corner < 3; corner += 1) {
       indices.push(addCorner(points[corner], cornerNormals[corner], faceUvs[corner]));
     }
@@ -466,21 +523,21 @@ function attachTexture(document, material, slot, name, png, kind) {
 }
 
 async function addWoodMaterial(document, materialName, species, maps) {
-  const normalScale = species === 'leather' ? 0.4 : species === 'maple' ? 0.55 : 0.7;
+  const normalScale = species === 'leather' ? 0.28 : species === 'maple' ? 0.55 : 0.85;
   const material = document.createMaterial(materialName || species)
     .setMetallicFactor(0)
-    .setRoughnessFactor(1)
+    .setRoughnessFactor(maps.roughnessFactor ?? 1)
     .setBaseColorFactor([1, 1, 1, 1])
     .setNormalScale(normalScale);
   attachTexture(document, material, 'baseColor', `${species}-color`, maps.colorPng);
   attachTexture(document, material, 'normal', `${species}-normal`, maps.normalPng);
-  attachTexture(document, material, 'roughness', `${species}-roughness`, maps.roughPng);
+  if (maps.roughPng) attachTexture(document, material, 'roughness', `${species}-roughness`, maps.roughPng);
   return material;
 }
 
 /**
  * @param {string} objPath
- * @param {{ wood?: 'auto'|'walnut'|'maple', textureSize?: number }} [options]
+ * @param {{ wood?: 'auto'|'walnut'|'maple', stain?: 'warm'|'grey', textureSize?: number }} [options]
  */
 export async function loadFusionObj(objPath, options = {}) {
   const text = await fs.readFile(objPath, 'utf8');
@@ -509,10 +566,14 @@ export async function loadFusionObj(objPath, options = {}) {
     const mtl = library.get(materialName);
     let species = materialFinish(materialName, mtl?.kd);
     if (species !== 'leather') species = resolveSpecies(options.wood ?? 'auto', materialName, mtl?.kd);
-    const size = options.textureSize ?? 1024;
+    const size = options.textureSize ?? (species === 'leather' ? 512 : 1024);
+    const stain = options.stain === 'grey' ? 'grey' : 'warm';
     const maps = species === 'leather'
       ? await generateLeatherMaps({ size })
-      : await generateWoodMaps({ species, size });
+      : species === 'walnut'
+        ? await walnutMapsForStain(stain)
+        : await generateWoodMaps({ species, size });
+    const tile = species === 'leather' ? LEATHER_TILE_CM : species === 'walnut' ? WOOD_TILE_CM : TILE_CM;
     const material = await addWoodMaterial(document, materialName, species, maps);
     if (mtl?.mapKd && mtlPath) {
       const imagePath = path.resolve(path.dirname(mtlPath), mtl.mapKd);
@@ -520,7 +581,7 @@ export async function loadFusionObj(objPath, options = {}) {
       const texture = document.createTexture(path.basename(imagePath)).setImage(image).setMimeType('image/png');
       material.setBaseColorTexture(texture);
     }
-    const mesh = buildPrimitive(document, buffer, parsed, faces, material, frames);
+    const mesh = buildPrimitive(document, buffer, parsed, faces, material, frames, tile);
     scene.addChild(document.createNode(materialName || 'Chair').setMesh(mesh));
     summaries.push({
       material: materialName,
@@ -528,6 +589,7 @@ export async function loadFusionObj(objPath, options = {}) {
       triangles: faces.length,
       kd: mtl?.kd ?? null,
       flatColor: !mtl?.mapKd,
+      stain: species === 'walnut' ? stain : null,
     });
   }
 
