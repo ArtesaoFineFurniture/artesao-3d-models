@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D models · Artesão Fine Furniture</title>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #2b241f;
+      --muted: #7a6e64;
+      --line: #e4dcd2;
+      --paper: #faf7f2;
+      --stage: #f1ece5;
+      --accent: #6b4429;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, system-ui, sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+    header, footer {
+      padding: 22px 6vw;
+      border-bottom: 1px solid var(--line);
+    }
+    footer {
+      border-bottom: 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .brand {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 26px;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+    .brand small {
+      display: block;
+      font-family: Inter, sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: -4px;
+    }
+    main { max-width: 1100px; margin: 0 auto; padding: 36px 6vw 72px; }
+    h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.05;
+      margin: 18px 0 8px;
+    }
+    .lede { max-width: 62ch; color: #4a4038; font-size: 16px; }
+    .catalog { display: grid; gap: 28px; margin-top: 32px; }
+    article {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .stage { position: relative; background: radial-gradient(ellipse at 50% 40%, #fbf9f5 0%, var(--stage) 70%); }
+    model-viewer {
+      width: 100%;
+      height: clamp(380px, 70vh, 640px);
+      display: block;
+      background: transparent;
+      --poster-color: transparent;
+      --progress-bar-color: var(--accent);
+      --progress-bar-height: 2px;
+    }
+    .ar-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      border: 1px solid var(--ink);
+      background: rgba(250, 247, 242, 0.92);
+      color: var(--ink);
+      padding: 10px 16px;
+      font: 500 11px/1 Inter, sans-serif;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .ar-btn:hover, .ar-btn:focus-visible { background: var(--ink); color: var(--paper); outline: none; }
+    .hint {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 14px;
+      text-align: center;
+      pointer-events: none;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .meta { padding: 18px 20px 22px; }
+    h2 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 500;
+      font-size: 32px;
+      margin: 0 0 4px;
+    }
+    .note {
+      display: inline-block;
+      margin: 0 0 12px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .links { display: grid; gap: 6px; font-size: 13px; }
+    .links a { color: var(--accent); word-break: break-all; }
+    .links span { color: var(--muted); }
+    .status { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">ARTESÃO<small>Fine Furniture</small></div>
+  </header>
+  <main>
+    <h1>3D models</h1>
+    <p class="lede">Spin, zoom, and place each piece in the room. These files are the ones embedded on artesao.co. Drag to rotate. Pinch or scroll to zoom.</p>
+    <div class="catalog" id="catalog">
+      <p class="status">Loading models…</p>
+    </div>
+  </main>
+  <footer>
+    Models are loaded from this site. The product pages use the versioned jsDelivr copies documented in the repository README.
+  </footer>
+  <script type="module">
+    const PAGES = 'https://artesaofinefurniture.github.io/artesao-3d-models';
+    const CDN = 'https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1';
+    const catalog = document.getElementById('catalog');
+
+    function linkRow(label, href) {
+      const row = document.createElement('div');
+      const name = document.createElement('span');
+      name.textContent = `${label}: `;
+      const anchor = document.createElement('a');
+      anchor.href = href;
+      anchor.textContent = href;
+      row.append(name, anchor);
+      return row;
+    }
+
+    function addModel(model) {
+      const folder = `models/${model.slug}`;
+      const file = `${folder}/${model.file}`;
+      const poster = `${folder}/${model.poster}`;
+      const article = document.createElement('article');
+      const stage = document.createElement('div');
+      stage.className = 'stage';
+
+      const viewer = document.createElement('model-viewer');
+      viewer.setAttribute('src', file);
+      viewer.setAttribute('poster', poster);
+      viewer.setAttribute('alt', model.alt || model.name);
+      viewer.setAttribute('camera-controls', '');
+      viewer.setAttribute('touch-action', 'pan-y');
+      viewer.setAttribute('auto-rotate', '');
+      viewer.setAttribute('auto-rotate-delay', '1500');
+      viewer.setAttribute('rotation-per-second', '18deg');
+      viewer.setAttribute('interaction-prompt', 'auto');
+      viewer.setAttribute('camera-orbit', '35deg 78deg auto');
+      viewer.setAttribute('min-camera-orbit', 'auto 15deg auto');
+      viewer.setAttribute('max-camera-orbit', 'auto 95deg auto');
+      viewer.setAttribute('field-of-view', '30deg');
+      viewer.setAttribute('environment-image', 'neutral');
+      viewer.setAttribute('exposure', '1.05');
+      viewer.setAttribute('shadow-intensity', '1');
+      viewer.setAttribute('shadow-softness', '0.85');
+      viewer.setAttribute('tone-mapping', 'neutral');
+      viewer.setAttribute('ar', '');
+      viewer.setAttribute('ar-modes', 'webxr scene-viewer quick-look');
+      viewer.setAttribute('ar-scale', 'fixed');
+      viewer.setAttribute('ar-placement', 'floor');
+      viewer.setAttribute('loading', 'eager');
+      viewer.setAttribute('reveal', 'auto');
+
+      const button = document.createElement('button');
+      button.slot = 'ar-button';
+      button.className = 'ar-btn';
+      button.type = 'button';
+      button.textContent = 'View in your room';
+      viewer.append(button);
+
+      const hint = document.createElement('div');
+      hint.className = 'hint';
+      hint.textContent = 'Drag to rotate · Pinch or scroll to zoom';
+      stage.append(viewer, hint);
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const heading = document.createElement('h2');
+      heading.textContent = model.name;
+      meta.append(heading);
+      if (model.note) {
+        const note = document.createElement('div');
+        note.className = 'note';
+        note.textContent = model.note;
+        meta.append(note);
+      }
+      const links = document.createElement('div');
+      links.className = 'links';
+      links.append(
+        linkRow('GitHub Pages', `${PAGES}/${file}`),
+        linkRow('jsDelivr', `${CDN}/${file}`),
+        linkRow('Poster', `${PAGES}/${poster}`),
+      );
+      meta.append(links);
+      article.append(stage, meta);
+      return article;
+    }
+
+    try {
+      const response = await fetch('models/catalog.json');
+      if (!response.ok) throw new Error(`Catalog responded ${response.status}`);
+      const data = await response.json();
+      const models = Array.isArray(data.models) ? data.models : [];
+      catalog.replaceChildren();
+      if (models.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'status';
+        empty.textContent = 'No models have been added yet.';
+        catalog.append(empty);
+      } else {
+        for (const model of models) catalog.append(addModel(model));
+      }
+    } catch (error) {
+      catalog.replaceChildren();
+      const message = document.createElement('p');
+      message.className = 'status';
+      message.textContent = 'The model list could not be loaded. Open this page from the GitHub Pages site.';
+      catalog.append(message);
+      console.error(error);
+    }
+  </script>
+  <noscript>This page needs JavaScript to show the 3D models.</noscript>
+</body>
+</html>

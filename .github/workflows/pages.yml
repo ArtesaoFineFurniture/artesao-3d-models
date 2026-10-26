@@ -1,0 +1,46 @@
+# Publishes the demo page, embed snippet, and model files to GitHub Pages
+# on every push to the default branch.
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Collect the site
+        run: |
+          mkdir -p _site
+          cp index.html .nojekyll _site/
+          cp -R models embed _site/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+          include-hidden-files: true
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
