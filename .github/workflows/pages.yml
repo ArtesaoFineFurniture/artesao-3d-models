@@ -1,10 +1,13 @@
 # Publishes the demo page, embed snippet, and model files to GitHub Pages
 # on every push to the default branch.
+# project-viewer/ is a private Netlify app and is not part of this site.
 name: Publish GitHub Pages
 
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'project-viewer/**'
   workflow_dispatch:
 
 permissions:
@@ -29,10 +32,15 @@ jobs:
       - name: Collect the site
         # source/ holds the original Fusion OBJ and MTL files. Leave it out
         # so the published site is only the page, the snippet, and the models.
+        # project-viewer/ is private and is deployed to Netlify, not Pages.
         run: |
           mkdir -p _site
           cp index.html .nojekyll _site/
           cp -R models embed _site/
+          if [ -e _site/project-viewer ]; then
+            echo "project-viewer must not be published on GitHub Pages." >&2
+            exit 1
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
