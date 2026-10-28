@@ -209,7 +209,6 @@ describe('private project viewer', { concurrency: 1 }, () => {
     const snippet = await readFile(path.join(repoRoot, 'embed/windsor-side-snippet.html'), 'utf8');
     for (const piece of [
       'https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js',
-      'ar-modes="webxr scene-viewer quick-look"',
       'ar-scale="fixed"',
       'ar-placement="floor"',
       'View in your room',
@@ -220,6 +219,8 @@ describe('private project viewer', { concurrency: 1 }, () => {
       assert.ok(snippet.includes(piece), piece);
       assert.ok(viewerHtml.includes(piece), piece);
     }
+    assert.match(snippet, /ar-modes="webxr scene-viewer quick-look"/);
+    assert.match(viewerHtml, /ar-modes="scene-viewer webxr quick-look"/);
     assert.match(viewerHtml, /\sar[\s>]/);
     const workflow = await readFile(path.join(repoRoot, '.github/workflows/pages.yml'), 'utf8');
     assert.match(workflow, /paths-ignore:/);
@@ -319,7 +320,7 @@ describe('private project viewer', { concurrency: 1 }, () => {
     assert.match(robots.headers.get('x-robots-tag'), /noindex/);
     const page = await fetch(`${base}/view/${token}`);
     assert.equal(page.status, 200);
-    assert.match(await page.text(), /ar-modes="webxr scene-viewer quick-look"/);
+    assert.match(await page.text(), /ar-modes="scene-viewer webxr quick-look"/);
     assert.equal(tokenFromPath(`/view/${token}`), token);
     assert.equal(tokenFromPath('/view/nope'), null);
     assert.equal(tokenFromPath('/view/a/b'), null);
@@ -406,7 +407,7 @@ describe('private project viewer', { concurrency: 1 }, () => {
         button: el.querySelector('button').textContent,
       }));
       assert.equal(attrs.ar, true);
-      assert.equal(attrs.modes, 'webxr scene-viewer quick-look');
+      assert.equal(attrs.modes, 'scene-viewer webxr quick-look');
       assert.equal(attrs.scale, 'fixed');
       assert.equal(attrs.placement, 'floor');
       assert.equal(attrs.button, 'View in your room');
