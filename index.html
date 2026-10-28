@@ -134,7 +134,7 @@
   </header>
   <main>
     <h1>3D models</h1>
-    <p class="lede">Spin, zoom, and place each piece in the room. These files are the ones embedded on artesao.co. Drag to rotate. Pinch or scroll to zoom.</p>
+    <p class="lede">Spin, zoom, and place each piece in the room. These files are the ones embedded on artesao.co. Drag to rotate. Pinch or scroll to zoom. On a phone, View in your room sets the piece on the floor at its real size. A desktop browser hides that button.</p>
     <div class="catalog" id="catalog">
       <p class="status">Loading models…</p>
     </div>
@@ -144,7 +144,7 @@
   </footer>
   <script type="module">
     const PAGES = 'https://artesaofinefurniture.github.io/artesao-3d-models';
-    const CDN = 'https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2';
+    const CDN = 'https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3';
     const catalog = document.getElementById('catalog');
 
     function linkRow(label, href) {
@@ -162,6 +162,7 @@
       const folder = `models/${model.slug}`;
       const file = `${folder}/${model.file}`;
       const poster = `${folder}/${model.poster}`;
+      const usdz = `${folder}/${model.slug}.usdz`;
       const article = document.createElement('article');
       const stage = document.createElement('div');
       stage.className = 'stage';
@@ -189,6 +190,7 @@
       viewer.setAttribute('ar-modes', 'webxr scene-viewer quick-look');
       viewer.setAttribute('ar-scale', 'fixed');
       viewer.setAttribute('ar-placement', 'floor');
+      viewer.setAttribute('ios-src', usdz);
       viewer.setAttribute('loading', 'eager');
       viewer.setAttribute('reveal', 'auto');
 
@@ -220,6 +222,8 @@
       links.append(
         linkRow('GitHub Pages', `${PAGES}/${file}`),
         linkRow('jsDelivr', `${CDN}/${file}`),
+        linkRow('USDZ', `${PAGES}/${usdz}`),
+        linkRow('USDZ on jsDelivr', `${CDN}/${usdz}`),
         linkRow('Poster', `${PAGES}/${poster}`),
       );
       meta.append(links);

@@ -9,7 +9,7 @@ The files are public on purpose, so the viewer on Squarespace (and on a later si
 | GitHub Pages | `https://artesaofinefurniture.github.io/artesao-3d-models/models/<product>/<product>.glb` |
 | jsDelivr (versioned) | `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@<tag>/models/<product>/<product>.glb` |
 
-jsDelivr is the address to paste into the website. A tag such as `v2` stays put when later products are added. The current release is `v2`. `v1` still serves the earlier files. GitHub Pages hosts the [demo page](https://artesaofinefurniture.github.io/artesao-3d-models/) that lists every model in `models/catalog.json`.
+jsDelivr is the address to paste into the website. A tag such as `v3` stays put when later products are added. The current release is `v3`. `v2` still serves the files from before the Quick Look USDZ models. `v1` still serves the earlier files. GitHub Pages hosts the [demo page](https://artesaofinefurniture.github.io/artesao-3d-models/) that lists every model in `models/catalog.json`.
 
 Commit the `.glb` and poster as normal Git files. Do not turn on Git LFS. LFS stores a small pointer text file instead of the model, and both GitHub Pages and jsDelivr would serve that pointer, so the viewer would fail. Keep each file under **20 MB** (jsDelivr's limit for a GitHub file). GitHub itself accepts files up to 100 MB.
 
@@ -27,7 +27,7 @@ Seven pieces are listed in `models/catalog.json` and on the demo page. Sizes bel
 | Traditional Dining Chair, Straight Leg | `models/traditional-straight/` | 47.2 × 54.9 × 94.7 cm | Walnut | [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html) |
 | Traditional Bar Stool | `models/traditional-stool/` | 52.1 × 43.9 × 80.0 cm | Walnut | [`embed/traditional-stool-snippet.html`](embed/traditional-stool-snippet.html) |
 
-The Legacy chairs are about 1.0 MB each. The Windsor chairs are about 1.3 MB each. The Traditional chairs are about 310–320 KB, and the bar stool is about 190 KB.
+The Legacy chairs are about 1.0 MB each. The Windsor chairs are about 1.3 MB each. The Traditional chairs are about 310–320 KB, and the bar stool is about 190 KB. Each folder also has a `.usdz` for iOS Quick Look. Those are larger, because the mesh is uncompressed and the textures are PNG: about 6.1 MB for the Legacy chairs, 7.9–8.0 MB for the Windsor chairs, 4.0–4.2 MB for the Traditional chairs, and 1.7 MB for the stool. All of them are under jsDelivr's 20 MB limit.
 
 ### `models/windsor/` alias
 
@@ -36,39 +36,56 @@ The Legacy chairs are about 1.0 MB each. The Windsor chairs are about 1.3 MB eac
 | Alias (old path) | Canonical path |
 |---|---|
 | `models/windsor/windsor.glb` | `models/windsor-side/windsor-side.glb` |
+| `models/windsor/windsor.usdz` | `models/windsor-side/windsor-side.usdz` |
 | `models/windsor/poster.webp` | `models/windsor-side/poster.webp` |
 
-New pages should use `models/windsor-side/` and [`embed/windsor-side-snippet.html`](embed/windsor-side-snippet.html). [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) still points at `models/windsor/windsor.glb`, now on the `v2` tag. The alias is not its own row in `models/catalog.json`, so the demo page lists the side chair once.
+New pages should use `models/windsor-side/` and [`embed/windsor-side-snippet.html`](embed/windsor-side-snippet.html). [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) still points at `models/windsor/windsor.glb`, now on the `v3` tag. The alias is not its own row in `models/catalog.json`, so the demo page lists the side chair once.
 
-**jsDelivr**, tag `v2`
+**jsDelivr**, tag `v3`
 
-- Legacy side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/legacy-side.glb`
-- Legacy side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/poster.webp`
-- Legacy arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-arm/legacy-arm.glb`
-- Legacy arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-arm/poster.webp`
-- Windsor side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-side/windsor-side.glb`
-- Windsor side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-side/poster.webp`
-- Windsor side alias: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor/windsor.glb`
-- Windsor side alias poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor/poster.webp`
-- Windsor arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-arm/windsor-arm.glb`
-- Windsor arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-arm/poster.webp`
-- Traditional turned model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-turned/traditional-turned.glb`
-- Traditional turned poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-turned/poster.webp`
-- Traditional straight model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-straight/traditional-straight.glb`
-- Traditional straight poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-straight/poster.webp`
-- Traditional stool model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-stool/traditional-stool.glb`
-- Traditional stool poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-stool/poster.webp`
+- Legacy side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/legacy-side/legacy-side.glb`
+- Legacy side Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/legacy-side/legacy-side.usdz`
+- Legacy side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/legacy-side/poster.webp`
+- Legacy arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/legacy-arm/legacy-arm.glb`
+- Legacy arm Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/legacy-arm/legacy-arm.usdz`
+- Legacy arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/legacy-arm/poster.webp`
+- Windsor side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor-side/windsor-side.glb`
+- Windsor side Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor-side/windsor-side.usdz`
+- Windsor side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor-side/poster.webp`
+- Windsor side alias: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor/windsor.glb`
+- Windsor side alias Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor/windsor.usdz`
+- Windsor side alias poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor/poster.webp`
+- Windsor arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor-arm/windsor-arm.glb`
+- Windsor arm Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor-arm/windsor-arm.usdz`
+- Windsor arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/windsor-arm/poster.webp`
+- Traditional turned model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-turned/traditional-turned.glb`
+- Traditional turned Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-turned/traditional-turned.usdz`
+- Traditional turned poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-turned/poster.webp`
+- Traditional straight model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-straight/traditional-straight.glb`
+- Traditional straight Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-straight/traditional-straight.usdz`
+- Traditional straight poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-straight/poster.webp`
+- Traditional stool model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-stool/traditional-stool.glb`
+- Traditional stool Quick Look: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-stool/traditional-stool.usdz`
+- Traditional stool poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/traditional-stool/poster.webp`
 
 **GitHub Pages**
 
 - Legacy side: `https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-side/legacy-side.glb`
+- Legacy side Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-side/legacy-side.usdz`
 - Legacy arm: `https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-arm/legacy-arm.glb`
+- Legacy arm Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-arm/legacy-arm.usdz`
 - Windsor side: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-side/windsor-side.glb`
+- Windsor side Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-side/windsor-side.usdz`
 - Windsor side alias: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor/windsor.glb`
+- Windsor side alias Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor/windsor.usdz`
 - Windsor arm: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-arm/windsor-arm.glb`
+- Windsor arm Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-arm/windsor-arm.usdz`
 - Traditional turned: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-turned/traditional-turned.glb`
+- Traditional turned Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-turned/traditional-turned.usdz`
 - Traditional straight: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-straight/traditional-straight.glb`
+- Traditional straight Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-straight/traditional-straight.usdz`
 - Traditional stool: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-stool/traditional-stool.glb`
+- Traditional stool Quick Look: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-stool/traditional-stool.usdz`
 
 `@main` serves whatever is on the main branch (jsDelivr may cache it for a while, so use it only to test). Paste a snippet the same way as below. Each file is already filled in. Two blocks on one page are fine.
 
@@ -81,9 +98,11 @@ Squarespace only runs JavaScript in Code Blocks on the Core, Plus, Advanced, Bus
 3. On a store product, put the block in a section below the product details ([adding information to a product](https://support.squarespace.com/hc/en-us/articles/206541037-Add-additional-information-to-store-page-products)).
 4. Save, then look at the page logged out or in a private window. Squarespace sometimes hides Code Block output while you are logged in. The help article above calls the workaround "Preview in Safe Mode".
 
-Each snippet already points at that chair's jsDelivr addresses, with camera controls, auto-rotate, a ground shadow, a poster, a responsive frame, and AR (`webxr`, Scene Viewer, and Quick Look). "View in your room" uses the model's real size, so the file has to be in meters. The optimizer below does that.
+Each snippet already points at that chair's jsDelivr addresses, with camera controls, auto-rotate, a ground shadow, a poster, a responsive frame, and AR (`webxr`, Scene Viewer, and Quick Look). "View in your room" uses the model's real size, so the GLB and the USDZ are both in meters. The optimizer below does that for the GLB. The USDZ step copies that size into the Quick Look file.
 
-For the next product, duplicate a snippet and change the two addresses and the alt text. Two snippets on one page are fine.
+model-viewer hides the button on a desktop browser. Android loads the GLB, through WebXR where the browser offers AR and otherwise through Scene Viewer. iPhone and iPad load the USDZ in Quick Look, including browsers other than Safari. `ar-scale="fixed"` keeps the real size, and `ar-placement="floor"` asks for the floor. The model sits on y = 0.
+
+For the next product, duplicate a snippet and change the three addresses (GLB, USDZ, and poster) and the alt text. Two snippets on one page are fine.
 
 ## Add another product
 
@@ -165,6 +184,15 @@ It prints the finished size, for example `58.0 cm wide × 65.0 cm deep × 102.0 
 
 A poster is the picture shoppers see while the model downloads. A straight-on or three-quarter screenshot is enough. `--poster` makes `poster.webp`. You can also drop in your own `poster.png` and name it in `models/catalog.json`.
 
+iOS Quick Look needs a USDZ. WebP inside the GLB will not display there, so the converter writes PNG textures into the package. It also checks that the USDZ stays Y-up, in meters, and the same size as the GLB.
+
+```bash
+pip install usd-core
+node scripts/glb-to-usdz.mjs models/sideboard/sideboard.glb models/sideboard/sideboard.usdz
+```
+
+Commit the `.usdz` next to the `.glb`. For the Windsor alias, copy the side-chair USDZ to `models/windsor/windsor.usdz`. The two files should match byte for byte, the same way the GLBs do.
+
 ### 3. List it, then commit
 
 Add a block to `models/catalog.json` so the demo page shows the new piece:
@@ -190,7 +218,7 @@ jsDelivr serves a tag forever, even after later edits.
 2. Set the tag to `v1` for the first batch (then `v2`, `v3`, … when a model changes). Target the `main` branch.
 3. Publish the release.
 
-Put that tag in the Squarespace snippet (`@v1`, `@v2`, …). An old tag keeps serving the old file, so a product page does not change until you edit its snippet.
+Put that tag in the Squarespace snippet (`@v1`, `@v2`, `@v3`, …). An old tag keeps serving the old file, so a product page does not change until you edit its snippet.
 
 When you replace a model, publish a new tag and update the snippet. Pushing to `main` updates GitHub Pages on its own. It does not change an address that is pinned to `@v1`.
 
@@ -210,11 +238,11 @@ You can re-run it any time from **Actions → Publish GitHub Pages → Run workf
 
 | Path | Purpose |
 |---|---|
-| `models/<product>/` | One folder per piece: the `.glb` and a poster |
+| `models/<product>/` | One folder per piece: the `.glb`, the Quick Look `.usdz`, and a poster |
 | `models/catalog.json` | The list the demo page reads |
 | `source/<product>/` | Original Fusion `.obj` and `.mtl`. Not published to GitHub Pages |
-| `models/windsor/` | Copy of `models/windsor-side/` under the old `windsor.glb` file name. Not a separate catalog entry |
-| `embed/model-viewer-snippet.html` | Older Squarespace Code Block for the Windsor side chair. Loads the `models/windsor/` alias at `@v2` |
+| `models/windsor/` | Copy of `models/windsor-side/` under the old `windsor.glb` and `windsor.usdz` file names. Not a separate catalog entry |
+| `embed/model-viewer-snippet.html` | Older Squarespace Code Block for the Windsor side chair. Loads the `models/windsor/` alias at `@v3` |
 | `embed/windsor-side-snippet.html` | Code Block for the Windsor side chair (`models/windsor-side/`) |
 | `embed/windsor-arm-snippet.html` | Code Block for the Windsor armchair |
 | `embed/legacy-side-snippet.html` | Code Block for the Legacy dining chair |
@@ -224,6 +252,7 @@ You can re-run it any time from **Actions → Publish GitHub Pages → Run workf
 | `embed/traditional-stool-snippet.html` | Code Block for the Traditional bar stool |
 | `index.html` | The demo page GitHub Pages serves |
 | `scripts/optimize.mjs` | The Node prep script (`@gltf-transform`, Sharp, Draco, Meshopt). Reads GLB, glTF, and Fusion OBJ+MTL |
+| `scripts/glb-to-usdz.mjs` | Writes a Quick Look USDZ from a finished GLB. `scripts/pack_usdz.py` packs it with OpenUSD (`pip install usd-core`) |
 | `scripts/textures/` | Photographic walnut grain used for walnut parts |
 | `.github/workflows/pages.yml` | Publishes the site from `main` |
 
