@@ -1,0 +1,101 @@
+<!--
+  Artesão 3D viewer for a Squarespace Code Block. Set the block type to HTML.
+  This copy is the Legacy Dining Chair (Walnut, brown leather).
+  For another product, duplicate this file and change the two addresses
+  and the alt text. The folder name in both addresses is the product folder
+  under models/.
+
+  @google/model-viewer v4.3.1 is loaded from Google's CDN and pinned to that version.
+
+  jsDelivr, pinned to the v2 release (use this on artesao.co and any later site):
+    https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/legacy-side.glb
+    https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/poster.webp
+  The same files on GitHub Pages, after Pages is turned on:
+    https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-side/legacy-side.glb
+    https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-side/poster.webp
+  Before the v2 release exists, a quick check can use @main in place of @v2.
+  Publish a new tag when a model changes, then update the tag in these addresses.
+-->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
+
+<style>
+  .artesao-3d, .artesao-3d * { box-sizing: border-box; }
+  .artesao-3d {
+    position: relative;
+    background: radial-gradient(ellipse at 50% 40%, #fbf9f5 0%, #f1ece5 70%);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .artesao-3d model-viewer {
+    width: 100%;
+    height: clamp(380px, 70vh, 640px);
+    display: block;
+    background: transparent;
+    --poster-color: transparent;
+    --progress-bar-color: #6b4429;
+    --progress-bar-height: 2px;
+  }
+  .artesao-3d .artesao-ar {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: 1px solid #2b241f;
+    background: rgba(250, 247, 242, 0.92);
+    color: #2b241f;
+    padding: 10px 16px;
+    font: 500 11px/1 sans-serif;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .artesao-3d .artesao-ar:hover,
+  .artesao-3d .artesao-ar:focus-visible {
+    background: #2b241f;
+    color: #faf7f2;
+    outline: none;
+  }
+  .artesao-3d .artesao-hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    text-align: center;
+    pointer-events: none;
+    font: 400 11px/1.4 sans-serif;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #7a6e64;
+  }
+</style>
+
+<div class="artesao-3d">
+  <model-viewer
+    src="https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/legacy-side.glb"
+    poster="https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/poster.webp"
+    alt="3D model of the Legacy dining chair in walnut with brown leather upholstery"
+    camera-controls
+    touch-action="pan-y"
+    auto-rotate
+    auto-rotate-delay="1500"
+    rotation-per-second="18deg"
+    interaction-prompt="auto"
+    camera-orbit="35deg 78deg auto"
+    min-camera-orbit="auto 15deg auto"
+    max-camera-orbit="auto 95deg auto"
+    field-of-view="30deg"
+    environment-image="neutral"
+    exposure="1.05"
+    shadow-intensity="1"
+    shadow-softness="0.85"
+    tone-mapping="neutral"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    ar-scale="fixed"
+    ar-placement="floor"
+    loading="lazy"
+    reveal="auto">
+    <button slot="ar-button" class="artesao-ar">View in your room</button>
+  </model-viewer>
+  <div class="artesao-hint">Drag to rotate · Pinch or scroll to zoom</div>
+</div>
