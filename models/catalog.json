@@ -1,6 +1,38 @@
 {
   "models": [
     {
+      "slug": "legacy-side",
+      "name": "Legacy Dining Chair",
+      "file": "legacy-side.glb",
+      "poster": "poster.webp",
+      "alt": "3D model of the Legacy dining chair in walnut with brown leather upholstery",
+      "note": "Walnut, brown leather"
+    },
+    {
+      "slug": "legacy-arm",
+      "name": "Legacy Armchair",
+      "file": "legacy-arm.glb",
+      "poster": "poster.webp",
+      "alt": "3D model of the Legacy armchair in walnut with brown leather upholstery",
+      "note": "Walnut, brown leather"
+    },
+    {
+      "slug": "windsor-side",
+      "name": "Windsor Dining Chair",
+      "file": "windsor-side.glb",
+      "poster": "poster.webp",
+      "alt": "3D model of the Windsor dining chair in walnut with warm grey leather upholstery",
+      "note": "Walnut, warm grey leather"
+    },
+    {
+      "slug": "windsor-arm",
+      "name": "Windsor Armchair",
+      "file": "windsor-arm.glb",
+      "poster": "poster.webp",
+      "alt": "3D model of the Windsor armchair in walnut with warm grey leather upholstery",
+      "note": "Walnut, warm grey leather"
+    },
+    {
       "slug": "traditional-turned",
       "name": "Traditional Dining Chair, Turned Leg",
       "file": "traditional-turned.glb",
@@ -13,24 +45,16 @@
       "name": "Traditional Dining Chair, Straight Leg",
       "file": "traditional-straight.glb",
       "poster": "poster.webp",
-      "alt": "3D model of the Traditional dining chair with straight tapered legs in figured maple",
-      "note": "Figured maple"
+      "alt": "3D model of the Traditional dining chair with straight legs in walnut",
+      "note": "Walnut"
     },
     {
-      "slug": "windsor",
-      "name": "Windsor Dining Chair",
-      "file": "windsor.glb",
+      "slug": "traditional-stool",
+      "name": "Traditional Bar Stool",
+      "file": "traditional-stool.glb",
       "poster": "poster.webp",
-      "alt": "3D model of the Windsor dining chair in grey-brown walnut with light grey leather upholstery",
-      "note": "Walnut, light grey leather"
-    },
-    {
-      "slug": "windsor-arm",
-      "name": "Windsor Armchair",
-      "file": "windsor-arm.glb",
-      "poster": "poster.webp",
-      "alt": "3D model of the Windsor armchair in grey-brown walnut with light grey leather upholstery",
-      "note": "Walnut, light grey leather"
+      "alt": "3D model of the Traditional bar stool with turned legs in walnut",
+      "note": "Walnut"
     }
   ]
 }

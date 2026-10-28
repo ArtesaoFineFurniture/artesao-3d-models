@@ -9,66 +9,74 @@ The files are public on purpose, so the viewer on Squarespace (and on a later si
 | GitHub Pages | `https://artesaofinefurniture.github.io/artesao-3d-models/models/<product>/<product>.glb` |
 | jsDelivr (versioned) | `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@<tag>/models/<product>/<product>.glb` |
 
-jsDelivr is the address to paste into the website. A tag such as `v1` stays put when later products are added. GitHub Pages hosts the [demo page](https://artesaofinefurniture.github.io/artesao-3d-models/) that lists every model.
+jsDelivr is the address to paste into the website. A tag such as `v2` stays put when later products are added. The current release is `v2`. `v1` still serves the earlier files. GitHub Pages hosts the [demo page](https://artesaofinefurniture.github.io/artesao-3d-models/) that lists every model in `models/catalog.json`.
 
 Commit the `.glb` and poster as normal Git files. Do not turn on Git LFS. LFS stores a small pointer text file instead of the model, and both GitHub Pages and jsDelivr would serve that pointer, so the viewer would fail. Keep each file under **20 MB** (jsDelivr's limit for a GitHub file). GitHub itself accepts files up to 100 MB.
 
-## Windsor dining chairs
+## Models
 
-Side chair and armchair, converted from the Fusion OBJ exports in `source/`. The frame is a grey-brown walnut with a photographic grain. The seat and back are a soft matte light warm-grey leather. Finished height is 96.8 cm. Each model is about 324 KB.
+Seven pieces are listed in `models/catalog.json` and on the demo page. Sizes below are width × depth × height, read from the published `.glb`.
 
-| | Side chair | Armchair |
-|---|---|---|
-| Folder | `models/windsor/` | `models/windsor-arm/` |
-| Finished size | 53.7 × 51.3 × 96.8 cm | 56.1 × 52.9 × 96.8 cm |
-| Squarespace block | [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) | [`embed/windsor-arm-snippet.html`](embed/windsor-arm-snippet.html) |
+| Piece | Folder | Finished size | Finish | Squarespace block |
+|---|---|---|---|---|
+| Legacy Dining Chair | `models/legacy-side/` | 53.5 × 65.5 × 101.5 cm | Walnut, brown leather | [`embed/legacy-side-snippet.html`](embed/legacy-side-snippet.html) |
+| Legacy Armchair | `models/legacy-arm/` | 58.1 × 65.5 × 101.5 cm | Walnut, brown leather | [`embed/legacy-arm-snippet.html`](embed/legacy-arm-snippet.html) |
+| Windsor Dining Chair | `models/windsor-side/` | 53.7 × 51.3 × 96.8 cm | Walnut, warm grey leather | [`embed/windsor-side-snippet.html`](embed/windsor-side-snippet.html) |
+| Windsor Armchair | `models/windsor-arm/` | 56.1 × 52.9 × 96.8 cm | Walnut, warm grey leather | [`embed/windsor-arm-snippet.html`](embed/windsor-arm-snippet.html) |
+| Traditional Dining Chair, Turned Leg | `models/traditional-turned/` | 48.3 × 52.4 × 95.5 cm | Walnut | [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html) |
+| Traditional Dining Chair, Straight Leg | `models/traditional-straight/` | 47.2 × 54.9 × 94.7 cm | Walnut | [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html) |
+| Traditional Bar Stool | `models/traditional-stool/` | 52.1 × 43.9 × 80.0 cm | Walnut | [`embed/traditional-stool-snippet.html`](embed/traditional-stool-snippet.html) |
 
-**jsDelivr**, after you publish the `v1` release described below
+The Legacy chairs are about 1.0 MB each. The Windsor chairs are about 1.3 MB each. The Traditional chairs are about 310–320 KB, and the bar stool is about 190 KB.
 
-- Side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor/windsor.glb`
-- Side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor/poster.webp`
-- Arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor-arm/windsor-arm.glb`
-- Arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/windsor-arm/poster.webp`
+### `models/windsor/` alias
 
-**GitHub Pages**, after Pages is turned on
+`models/windsor/` is a copy of the Windsor side chair in `models/windsor-side/`, kept so pages that already load the old path keep working. The two copies match byte for byte:
 
-- Side model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor/windsor.glb`
-- Arm model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-arm/windsor-arm.glb`
+| Alias (old path) | Canonical path |
+|---|---|
+| `models/windsor/windsor.glb` | `models/windsor-side/windsor-side.glb` |
+| `models/windsor/poster.webp` | `models/windsor-side/poster.webp` |
 
-Until that release exists, `@main` serves whatever is on the main branch (jsDelivr may cache it for a while, so use it only to test):
+New pages should use `models/windsor-side/` and [`embed/windsor-side-snippet.html`](embed/windsor-side-snippet.html). [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) still points at `models/windsor/windsor.glb`, now on the `v2` tag. The alias is not its own row in `models/catalog.json`, so the demo page lists the side chair once.
 
-`https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@main/models/windsor/windsor.glb`
+**jsDelivr**, tag `v2`
 
-## Traditional dining chairs
+- Legacy side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/legacy-side.glb`
+- Legacy side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-side/poster.webp`
+- Legacy arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-arm/legacy-arm.glb`
+- Legacy arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/legacy-arm/poster.webp`
+- Windsor side model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-side/windsor-side.glb`
+- Windsor side poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-side/poster.webp`
+- Windsor side alias: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor/windsor.glb`
+- Windsor side alias poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor/poster.webp`
+- Windsor arm model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-arm/windsor-arm.glb`
+- Windsor arm poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/windsor-arm/poster.webp`
+- Traditional turned model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-turned/traditional-turned.glb`
+- Traditional turned poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-turned/poster.webp`
+- Traditional straight model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-straight/traditional-straight.glb`
+- Traditional straight poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-straight/poster.webp`
+- Traditional stool model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-stool/traditional-stool.glb`
+- Traditional stool poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v2/models/traditional-stool/poster.webp`
 
-Two versions of the Traditional chair, converted from the Fusion OBJ exports in `source/`. Finished height is about 95 cm.
+**GitHub Pages**
 
-| | Turned leg | Straight leg |
-|---|---|---|
-| Real wood | Walnut | Figured maple |
-| Folder | `models/traditional-turned/` | `models/traditional-straight/` |
-| Finished size | 48.3 × 52.4 × 95.5 cm | 47.2 × 54.9 × 94.7 cm |
-| Squarespace block | [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html) | [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html) |
+- Legacy side: `https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-side/legacy-side.glb`
+- Legacy arm: `https://artesaofinefurniture.github.io/artesao-3d-models/models/legacy-arm/legacy-arm.glb`
+- Windsor side: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-side/windsor-side.glb`
+- Windsor side alias: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor/windsor.glb`
+- Windsor arm: `https://artesaofinefurniture.github.io/artesao-3d-models/models/windsor-arm/windsor-arm.glb`
+- Traditional turned: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-turned/traditional-turned.glb`
+- Traditional straight: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-straight/traditional-straight.glb`
+- Traditional stool: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-stool/traditional-stool.glb`
 
-**jsDelivr**, after the `v1` release
-
-- Turned model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-turned/traditional-turned.glb`
-- Turned poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-turned/poster.webp`
-- Straight model: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-straight/traditional-straight.glb`
-- Straight poster: `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v1/models/traditional-straight/poster.webp`
-
-**GitHub Pages**, after Pages is turned on
-
-- Turned model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-turned/traditional-turned.glb`
-- Straight model: `https://artesaofinefurniture.github.io/artesao-3d-models/models/traditional-straight/traditional-straight.glb`
-
-Paste a snippet the same way as Windsor, below. Each file is already filled in. Two blocks on one page are fine.
+`@main` serves whatever is on the main branch (jsDelivr may cache it for a while, so use it only to test). Paste a snippet the same way as below. Each file is already filled in. Two blocks on one page are fine.
 
 ## Put a model on a Squarespace page
 
 Squarespace only runs JavaScript in Code Blocks on the Core, Plus, Advanced, Business, Commerce Basic, and Commerce Advanced plans. On a plan without it, the block saves and the viewer stays blank. See [Code blocks](https://support.squarespace.com/hc/en-us/articles/206543167-Code-blocks). The block itself must stay under Squarespace's 400 KB limit. This one is a few kilobytes. The model is loaded from the link, not pasted into the block.
 
-1. Open the snippet for that chair and copy the whole file. Windsor is [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) and the armchair is [`embed/windsor-arm-snippet.html`](embed/windsor-arm-snippet.html). The Traditional chairs are [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html) and [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html).
+1. Open the snippet for that piece and copy the whole file. Legacy is [`embed/legacy-side-snippet.html`](embed/legacy-side-snippet.html) and [`embed/legacy-arm-snippet.html`](embed/legacy-arm-snippet.html). Windsor is [`embed/windsor-side-snippet.html`](embed/windsor-side-snippet.html) and [`embed/windsor-arm-snippet.html`](embed/windsor-arm-snippet.html). [`embed/model-viewer-snippet.html`](embed/model-viewer-snippet.html) is the older Windsor side-chair block; it loads the `models/windsor/` alias. The Traditional pieces are [`embed/traditional-turned-snippet.html`](embed/traditional-turned-snippet.html), [`embed/traditional-straight-snippet.html`](embed/traditional-straight-snippet.html), and [`embed/traditional-stool-snippet.html`](embed/traditional-stool-snippet.html).
 2. Edit the product page → **Add block** → **Code** → set the type to **HTML** → paste.
 3. On a store product, put the block in a section below the product details ([adding information to a product](https://support.squarespace.com/hc/en-us/articles/206541037-Add-additional-information-to-store-page-products)).
 4. Save, then look at the page logged out or in a private window. Squarespace sometimes hides Code Block output while you are logged in. The help article above calls the workaround "Preview in Safe Mode".
@@ -205,10 +213,15 @@ You can re-run it any time from **Actions → Publish GitHub Pages → Run workf
 | `models/<product>/` | One folder per piece: the `.glb` and a poster |
 | `models/catalog.json` | The list the demo page reads |
 | `source/<product>/` | Original Fusion `.obj` and `.mtl`. Not published to GitHub Pages |
-| `embed/model-viewer-snippet.html` | Squarespace Code Block for the Windsor side chair |
+| `models/windsor/` | Copy of `models/windsor-side/` under the old `windsor.glb` file name. Not a separate catalog entry |
+| `embed/model-viewer-snippet.html` | Older Squarespace Code Block for the Windsor side chair. Loads the `models/windsor/` alias at `@v2` |
+| `embed/windsor-side-snippet.html` | Code Block for the Windsor side chair (`models/windsor-side/`) |
 | `embed/windsor-arm-snippet.html` | Code Block for the Windsor armchair |
+| `embed/legacy-side-snippet.html` | Code Block for the Legacy dining chair |
+| `embed/legacy-arm-snippet.html` | Code Block for the Legacy armchair |
 | `embed/traditional-turned-snippet.html` | Code Block for the turned-leg Traditional chair |
 | `embed/traditional-straight-snippet.html` | Code Block for the straight-leg Traditional chair |
+| `embed/traditional-stool-snippet.html` | Code Block for the Traditional bar stool |
 | `index.html` | The demo page GitHub Pages serves |
 | `scripts/optimize.mjs` | The Node prep script (`@gltf-transform`, Sharp, Draco, Meshopt). Reads GLB, glTF, and Fusion OBJ+MTL |
 | `scripts/textures/` | Photographic walnut grain used for walnut parts |
