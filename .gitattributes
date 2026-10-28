@@ -1,0 +1,8 @@
+# Store models as ordinary Git blobs. Git LFS pointers do not work on
+# GitHub Pages or jsDelivr, so these patterns must not use the LFS filter.
+*.glb binary
+*.png binary
+*.webp binary
+*.jpg binary
+*.jpeg binary
+*.obj binary
