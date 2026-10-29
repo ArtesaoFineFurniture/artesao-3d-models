@@ -14,12 +14,12 @@ const snippets = [
 ];
 
 for (const [file, slug] of snippets) {
-  test(`${file} points View in your room at the v3 USDZ`, async () => {
+  test(`${file} points View in your room at the v4 USDZ`, async () => {
     const html = await readFile(file, 'utf8');
-    const base = `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v3/models/${slug}/${slug}`;
+    const base = `https://cdn.jsdelivr.net/gh/ArtesaoFineFurniture/artesao-3d-models@v4/models/${slug}/${slug}`;
     assert.match(html, /model-viewer\/4\.3\.1\/model-viewer\.min\.js/);
     assert.match(html, /\n\s+ar\n/);
-    assert.match(html, /ar-modes="webxr scene-viewer quick-look"/);
+    assert.match(html, /ar-modes="scene-viewer webxr quick-look"/);
     assert.match(html, /ar-scale="fixed"/);
     assert.match(html, /ar-placement="floor"/);
     assert.match(html, new RegExp(`src="${base}\\.glb"`));
@@ -27,6 +27,7 @@ for (const [file, slug] of snippets) {
     assert.match(html, new RegExp(`poster="${base.replace(`${slug}/${slug}`, `${slug}/poster`)}\\.webp"`));
     assert.match(html, /<button slot="ar-button" type="button" class="artesao-ar">View in your room<\/button>/);
     assert.equal(html.includes('@v2'), false);
+    assert.equal(html.includes('@v3'), false);
     assert.equal(html.includes('<script'), true);
     assert.equal(html.includes('type="module"'), true);
   });
