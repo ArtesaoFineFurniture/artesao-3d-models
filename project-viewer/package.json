@@ -1,0 +1,21 @@
+{
+  "name": "artesao-project-viewer",
+  "private": true,
+  "type": "module",
+  "description": "Private per-project 3D and AR viewer for Artesão Fine Furniture",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "test": "node --test scripts/viewer.test.mjs",
+    "sample-fbx": "node scripts/sample-fbx.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "11.1.7",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "puppeteer-core": "24.23.0"
+  }
+}
